@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Adapter;
@@ -132,9 +133,7 @@ public class ExportaActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
         intent.setType("text/plain");
         intent.putExtra(intent.EXTRA_EMAIL, new String[]{""});
-        //intent.putExtra(Intent.EXTRA_SUBJECT, "Pedido de Compras");
         intent.putExtra(Intent.EXTRA_SUBJECT, "Arquivos Coletados");
-        //intent.putExtra(Intent.EXTRA_TEXT, "Em anexo pedido de compras.");
         intent.putExtra(Intent.EXTRA_TEXT, "Segue em anexo arquivo(s) coletado(s).");
 
         //SPLIT PARA CARREGAR OS ANEXOS
@@ -142,13 +141,18 @@ public class ExportaActivity extends AppCompatActivity {
         String[] anexos = CurrentString.split(";");
 
         File baseDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+        //File baseDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+
         baseDir.mkdirs();
         //File f1 = new File(baseDir, Anexo);
-        ArrayList<Uri> uris = new ArrayList<Uri>();
+
+        ArrayList<Uri> uris = new ArrayList<Uri >();
 
         for (Integer i = 0; i < NumeroAnexos ;i++){
             File f1 = new File(baseDir, anexos[i]);
-            uris.add(Uri.fromFile(f1));
+            Uri uri = FileProvider.getUriForFile(getApplicationContext(),"com.bandeira.sidnei.appleitor.provider",f1);
+            //uris.add(Uri.fromFile(f1));
+            uris.add(uri);
         }
 
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
